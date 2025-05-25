@@ -5,7 +5,7 @@ import io
 import log_monitor
 
 class TestLogMonitor(unittest.TestCase):
-    # Executes before tests
+    # Executes automatically before tests
     def setUp(self):
         # Capture logs with a dedicated handler
         self.log_output = io.StringIO()
@@ -16,7 +16,7 @@ class TestLogMonitor(unittest.TestCase):
         self.logger.addHandler(self.log_handler)
         self.logger.setLevel(logging.INFO)
 
-    # Executes after tests
+    # Executes automatically after tests
     def tearDown(self):
         self.logger.removeHandler(self.log_handler)
         self.log_handler.close()
