@@ -1,10 +1,8 @@
 # Task Duration Monitor
-
 This Python application parses a log file (`logs.log`) in CSV format and computes the execution duration of tasks, 
 printing warnings or errors based on fixed thresholds (5 minutes and 10 minutes respectively).
 
 ## Input File: `logs.log`
-
 The input is a CSV file without headers, where each row represents a task event in the following format:
 
 ```text
@@ -17,7 +15,6 @@ The input is a CSV file without headers, where each row represents a task event 
 - **task-id**: Numeric ID used to correlate task START and END events.
 
 ### Example:
-
 ```text
 11:35:23,task description A, START,37980
 11:40:30,task description A, END,37980
@@ -25,7 +22,6 @@ The input is a CSV file without headers, where each row represents a task event 
 ```
 
 ## How It Works
-
 The script follows a simple and efficient algorithm:
 
 1. **Parse each line** of the CSV log file.
@@ -40,7 +36,6 @@ The script follows a simple and efficient algorithm:
 4. **If an END has no matching START**, log an `ERROR`.
 
 ## Output after running the program for the sample logs.log file
-
 ```text
 ERROR: Task ID 39547 duration: 0:11:29
 ERROR: Task ID 45135 duration: 0:12:23
@@ -66,9 +61,35 @@ Process finished with exit code 0
 ```
 
 ## Running the Script
-
 Make sure your `logs.log` file is in the same directory, then run:
 
 ```bash
 python log_monitor.py
+```
+
+## Testing
+This project includes a suite of unit tests to validate the log parsing logic and 
+ensure the application behaves correctly under various scenarios.
+
+### Test Coverage
+The tests cover the following cases:
+
+- Tasks that complete in under 5 minutes (no warnings/errors).
+- Tasks that take longer than 5 minutes (should log a **warning**).
+- Tasks that take longer than 10 minutes (should log an **error**).
+- END events without a matching START (should log an **error**).
+- Malformed CSV rows (rows with missing columns are skipped).
+
+### Logging Capture in Tests
+To ensure logs are properly captured during tests (e.g., warnings and errors), 
+a `StreamHandler` is attached directly to the logger in the test setup. 
+Captured log output is validated using assertions.
+
+### Running the Tests
+To run the tests, execute the following command from the project root:
+
+```bash
+python -m unittest discover
+# or
+python test_log_monitor.py
 ```
