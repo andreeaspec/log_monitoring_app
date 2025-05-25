@@ -11,7 +11,6 @@ The input is a CSV file without headers, where each row represents a task event 
 <timestamp>,<task-description>,<event>,<task-id>
 ```
 
-
 - **timestamp**: Task event time in `HH:MM:SS` format (24-hour clock).
 - **task-description**: Free text describing the task (ignored by the logic).
 - **event**: Either `START` or `END`.
@@ -24,8 +23,6 @@ The input is a CSV file without headers, where each row represents a task event 
 11:40:30,task description A, END,37980
 11:45:00,background task B, START,81258
 ```
-
----
 
 ## How It Works
 
@@ -42,17 +39,31 @@ The script follows a simple and efficient algorithm:
    - Remove the task from memory.
 4. **If an END has no matching START**, log an `ERROR`.
 
----
-
-## Example Output
+## Output after running the program for the sample logs.log file
 
 ```text
-WARNING: Task ID 37980 duration: 0:05:07
-ERROR: Task ID 38200 took too long: 0:10:42
-ERROR: END event found for Task ID 38201 with no corresponding START event!
-```
+ERROR: Task ID 39547 duration: 0:11:29
+ERROR: Task ID 45135 duration: 0:12:23
+WARNING: Task ID 71766 duration: 0:05:47
+ERROR: Task ID 81258 duration: 0:14:46
+WARNING: Task ID 87228 duration: 0:09:28
+WARNING: Task ID 50295 duration: 0:06:35
+WARNING: Task ID 27222 duration: 0:06:08
+WARNING: Task ID 87570 duration: 0:07:53
+WARNING: Task ID 99672 duration: 0:05:13
+WARNING: Task ID 86716 duration: 0:05:34
+ERROR: Task ID 22003 duration: 0:11:13
+ERROR: Task ID 85742 duration: 0:12:17
+WARNING: Task ID 98746 duration: 0:07:17
+ERROR: Task ID 39860 duration: 0:19:52
+ERROR: Task ID 52532 duration: 0:13:53
+ERROR: Task ID 62401 duration: 0:10:24
+ERROR: Task ID 23703 duration: 0:13:26
+ERROR: Task ID 70808 duration: 0:33:43
+WARNING: Task ID 24482 duration: 0:08:36
 
----
+Process finished with exit code 0
+```
 
 ## Running the Script
 

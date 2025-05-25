@@ -42,25 +42,27 @@ def main():
         reader = csv.reader(csvfile)
         for csv_row in reader:
             if len(csv_row) != 4:
-                continue  # skip malformed rows
+                continue  # skip malformed CSV rows - each row must have exactly 4 columns
+
             timestamp, description, event, taskid = [item.strip() for item in csv_row]
-            time_obj = parse_time(timestamp)
+            parsed_time_obj = parse_time(timestamp)
 
             if START_EVENT == event:
-                start_times[taskid] = time_obj
+                start_times[taskid] = parsed_time_obj
             elif END_EVENT == event:
                 if taskid in start_times:
-                    duration = time_obj - start_times[taskid]
+                    duration = parsed_time_obj - start_times[taskid]
                     if duration > error_threshold:
-                        logging.error(f"Task ID {taskid} took too long: {duration}")
+                        logging.error(f"Task ID {taskid} duration: {duration}")
                     elif duration > warning_threshold:
                         logging.warning(f"Task ID {taskid} duration: {duration}")
 
                     # Delete the start time to free memory
                     del start_times[taskid]
                 else:
-                    logging.error(f"END event found for Task ID {taskid} with no corresponding START event!")
+                    logging.error(f"Found END event for Task ID {taskid} with no corresponding START event!")
 
 
+# Invoke main() method
 if __name__ == "__main__":
     main()
