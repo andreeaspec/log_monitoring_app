@@ -70,5 +70,5 @@ Process finished with exit code 0
 Make sure your `logs.log` file is in the same directory, then run:
 
 ```bash
-python main.py
+python log_monitor.py
 ```

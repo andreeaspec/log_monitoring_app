@@ -29,38 +29,42 @@ def parse_time(t):
      -> For tasks taking more than 10 minutes => ERROR
 '''
 
+# Configure application logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-def main():
+
+def analyze_logs(csvfile):
     # Dictionary to hold START time per task ID
     start_times = {}
 
-    # Configure application logging
-    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+    reader = csv.reader(csvfile)
+    for csv_row in reader:
+        if len(csv_row) != 4:
+            continue  # skip malformed CSV rows - each row must have exactly 4 columns
 
+        timestamp, description, event, taskid = [item.strip() for item in csv_row]
+        parsed_time_obj = parse_time(timestamp)
+
+        if START_EVENT == event:
+            start_times[taskid] = parsed_time_obj
+        elif END_EVENT == event:
+            if taskid in start_times:
+                duration = parsed_time_obj - start_times[taskid]
+                if duration > error_threshold:
+                    logging.error(f"Task ID {taskid} duration: {duration}")
+                elif duration > warning_threshold:
+                    logging.warning(f"Task ID {taskid} duration: {duration}")
+
+                # Delete the start time to free memory
+                del start_times[taskid]
+            else:
+                logging.error(f"Found END event for Task ID {taskid} with no corresponding START event!")
+
+
+def main():
     # Read the CSV file and parse it
     with open(LOG_FILENAME, newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        for csv_row in reader:
-            if len(csv_row) != 4:
-                continue  # skip malformed CSV rows - each row must have exactly 4 columns
-
-            timestamp, description, event, taskid = [item.strip() for item in csv_row]
-            parsed_time_obj = parse_time(timestamp)
-
-            if START_EVENT == event:
-                start_times[taskid] = parsed_time_obj
-            elif END_EVENT == event:
-                if taskid in start_times:
-                    duration = parsed_time_obj - start_times[taskid]
-                    if duration > error_threshold:
-                        logging.error(f"Task ID {taskid} duration: {duration}")
-                    elif duration > warning_threshold:
-                        logging.warning(f"Task ID {taskid} duration: {duration}")
-
-                    # Delete the start time to free memory
-                    del start_times[taskid]
-                else:
-                    logging.error(f"Found END event for Task ID {taskid} with no corresponding START event!")
+        analyze_logs(csvfile)
 
 
 # Invoke main() method
